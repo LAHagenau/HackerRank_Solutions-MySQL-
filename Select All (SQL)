@@ -1,0 +1,4 @@
+# Selects all the data in the table 
+
+SELECT *
+FROM CITY; 
