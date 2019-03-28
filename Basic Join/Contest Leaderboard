@@ -1,0 +1,14 @@
+# Problem: Write a query to print the hacker_id, name, and total score of the hackers ordered by the descending score. 
+# If more than one hacker achieved the same total score, then sort the result by ascending hacker_id. 
+# Exclude all hackers with a total score of 0 from your result
+
+
+
+SELECT H.hacker_id, H.name, sum(score) AS Total
+FROM Hackers AS H JOIN 
+(SELECT hacker_id, max(score) AS score FROM Submissions 
+GROUP BY challenge_id, hacker_id) Mscore
+ON H.hacker_id = Mscore.hacker_id
+GROUP BY H.hacker_id, H.name
+HAVING Total > 0
+ORDER BY Total DESC, H.hacker_id; 
