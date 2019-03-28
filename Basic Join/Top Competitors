@@ -1,0 +1,15 @@
+ # Problem: print the respective hacker_id and name of hackers who achieved full scores for more than one challenge. 
+ # Order your output in descending order by the total number of challenges in which the hacker earned a full score. 
+ # If more than one hacker received full scores in same number of challenges, then sort them by ascending hacker_id.
+
+SELECT Hackers.hacker_id, Hackers.name 
+FROM Submissions JOIN Challenges
+ON Submissions.challenge_id = Challenges.challenge_id
+JOIN Difficulty
+ON Challenges.difficulty_level =  Difficulty.difficulty_level
+JOIN Hackers
+ON Submissions.hacker_id = Hackers.hacker_id 
+WHERE  Submissions.score = Difficulty.score
+GROUP BY Hackers.hacker_id, Hackers.name
+HAVING COUNT(Submissions.hacker_id) > 1 
+ORDER BY COUNT(Submissions.hacker_id) DESC , Hackers.hacker_id;
