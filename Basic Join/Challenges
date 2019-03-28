@@ -1,0 +1,29 @@
+# Problem: Write a query to print the hacker_id, name, and the total number of challenges created by each student. 
+# Sort your results by the total number of challenges in descending order.
+# If more than one student created the same number of challenges, then sort the result by hacker_id. 
+# If more than one student created the same number of challenges and the count is less than the maximum number of challenges created, 
+# then exclude those students from the result.
+
+SELECT H.hacker_id, H.name, COUNT(C.challenge_id) as total
+FROM Hackers H, Challenges C
+WHERE H.hacker_id = C.hacker_id
+GROUP BY H.hacker_id, H.name
+
+HAVING total = 
+    (SELECT COUNT(*) FROM Challenges
+     GROUP BY hacker_id 
+     ORDER BY COUNT(*) DESC 
+     limit 1)
+     
+OR total IN
+    (SELECT total
+     FROM (
+        SELECT COUNT(*) AS total
+        FROM Hackers H, Challenges C
+        WHERE H.hacker_id = C.hacker_id
+        GROUP BY H.hacker_id, H.name
+      ) AS counts
+     GROUP BY total
+     HAVING count(*) = 1)
+     
+ORDER BY total DESC, H.hacker_id;
