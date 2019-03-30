@@ -1,0 +1,4 @@
+# Problem: Write a query to print the pattern P(20).
+
+set @num = 21;
+select repeat('* ', @num := @num - 1) from information_schema.tables;
