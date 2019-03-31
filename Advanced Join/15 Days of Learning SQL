@@ -1,0 +1,28 @@
+/* Problem: Write a query to print total number of unique hackers who made at least 1 submission each day 
+(starting on the first day of the contest), and find the hacker_id and name of the hacker 
+who made the maximum number of submissions each day. 
+If more than one such hacker has a maximum number of submissions, print the lowest hacker_id.
+The query should print this information for each day of the contest, sorted by the date. */ 
+
+SELECT submission_date,
+
+/* Number of hackers who have submitted every day so far */ 
+( SELECT COUNT(DISTINCT hacker_id)  FROM Submissions AS hackerCount  
+ WHERE hackerCount.submission_date = dates.submission_date 
+ AND (SELECT COUNT(DISTINCT submissionCount.submission_date) 
+      FROM Submissions AS submissionCount 
+      WHERE submissionCount.hacker_id = hackerCount.hacker_id 
+      AND submissionCount.submission_date < dates.submission_date) 
+                = dateDIFF(dates.submission_date , '2016-03-01')) ,
+                
+/* Counts the number of submissions a hacker made each day and picks the hacker who made the most submissions */ 
+( SELECT  hacker_id  FROM submissions AS hackerList 
+    WHERE hackerList.submission_date = dates.submission_date 
+    GROUP BY hacker_id 
+    ORDER BY count(submission_id) DESC , hacker_id limit 1) as topHack,
+    
+/* Selects the name of the hacker who made the most submissions each day, printed for each day of the contest */ 
+( SELECT name FROM hackers 
+    WHERE hacker_id = topHack)
+    FROM (SELECT DISTINCT submission_date FROM submissions) AS dates
+    GROUP BY submission_date
